@@ -4,25 +4,10 @@ from django.conf import settings
 from packaging import version
 from sentry import __version__ as sentry_version
 
-def compare_versions(current: str, required: str) -> bool:
-    """
-    Check if the current version meets the required version.
-
-    :param current: The current version string
-    :param required: The required version string
-    :return: True if the current version is greater than or equal to the required version, otherwise False
-    """
-    return version.parse(current) >= version.parse(required)
-
 from sentry.models import Organization, OrganizationMember, UserOption
 
-# Import different models for backwards compatibility
-if compare_versions(sentry_version, "24.10.0"):
-    from sentry.users.models import UserEmail
-elif compare_versions(sentry_version, "24.8.0"):
-    from sentry.users.models.useremail import UserEmail
-else:
-    from sentry.models import UserEmail
+# works only with >= 24.10.0
+from sentry.users.models import UserEmail
 
 def _get_effective_sentry_role(ldap_user):
     role_priority_order = [
